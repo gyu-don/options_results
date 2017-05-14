@@ -2,70 +2,38 @@
 
 use std::fmt::Debug;
 use std::iter::Iterator;
+use std::marker::PhantomData;
 use std::result::Result;
 
-/// This is for internal use.
-pub trait _ResultTrait {
-    #[allow(missing_docs)]
-    type Type;
-    #[allow(missing_docs)]
-    type ErrType;
-    #[allow(missing_docs)]
-    fn _unwrap(self) -> Self::Type where Self::ErrType: Debug;
-    #[allow(missing_docs)]
-    fn _unwrap_or(self, Self::Type) -> Self::Type;
-    #[allow(missing_docs)]
-    fn _is_ok(&self) -> bool;
-    #[allow(missing_docs)]
-    fn _is_err(&self) -> bool;
-    #[allow(missing_docs)]
-    fn _as_result(self) -> Result<Self::Type, Self::ErrType>;
-    #[allow(missing_docs)]
-    fn _map<U, F>(self, F) -> Result<U, Self::ErrType> where F: FnOnce(Self::Type) -> U;
-    #[allow(missing_docs)]
-    fn _map_err<F, O>(self, f: O) -> Result<Self::Type, F> where O: FnOnce(Self::ErrType) -> F;
-}
-impl<T, E> _ResultTrait for Result<T, E> {
-    type Type = T;
-    type ErrType = E;
-    fn _unwrap(self) -> Self::Type where Self::ErrType: Debug { self.unwrap() }
-    fn _unwrap_or(self, def: Self::Type) -> Self::Type { self.unwrap_or(def) }
-    fn _is_ok(&self) -> bool { self.is_ok() }
-    fn _is_err(&self) -> bool { self.is_err() }
-    fn _as_result(self) -> Self { self }
-    fn _map<U, F>(self, f: F) -> Result<U, Self::ErrType> where F: FnOnce(Self::Type) -> U { self.map(f) }
-    fn _map_err<F, O>(self, f: O) -> Result<Self::Type, F> where O: FnOnce(Self::ErrType) -> F { self.map_err(f) }
-}
-
 /// Add some methods for the iterator of `Result<T, E>`.
-pub trait ResultIter: Iterator where Self: Sized, <Self as Iterator>::Item: _ResultTrait {
+pub trait ResultIter<T, E>: Iterator<Item=Result<T, E>> where Self: Sized {
     /// Create an iterator which yields the unwrapped value as the next value.
     /// (`Unwrap<I>::next()` will panic if the value is `Err(_)`.)
-    fn unwrap(self) -> Unwrap<Self> {
-        Unwrap { iter: self }
+    fn unwrap(self) -> Unwrap<Self, T, E> {
+        Unwrap { iter: self, phantom: PhantomData }
     }
     /// Create an iterator which yields the unwrapped value or a default as the next value.
-    fn unwrap_or(self, def: <<Self as Iterator>::Item as _ResultTrait>::Type) -> UnwrapOr<Self> {
-        UnwrapOr { iter: self, def: def }
+    fn unwrap_or(self, def: T) -> UnwrapOr<Self, T, E> {
+        UnwrapOr { iter: self, def: def, phantom: PhantomData }
     }
     /// Count the number of `Ok(_)` in this iterator.
     fn count_ok(self) -> usize {
-        self.fold(0usize, |acc, x| acc + if x._is_ok() { 1 } else { 0 })
+        self.fold(0usize, |acc, x| acc + if x.is_ok() { 1 } else { 0 })
     }
     /// Count the number of `Err(_)` in this iterator.
     fn count_err(self) -> usize {
-        self.fold(0usize, |acc, x| acc + if x._is_err() { 1 } else { 0 })
+        self.fold(0usize, |acc, x| acc + if x.is_err() { 1 } else { 0 })
     }
     /// Count the number of `Ok(_)` and `Err(_)` in this iterator.
     /// Return a tuple as `(number of Ok value, number of Err value)`
     fn count_ok_err(self) -> (usize, usize) {
-        self.fold((0usize, 0usize), |acc, x| if x._is_ok() { (acc.0 + 1, acc.1) } else { (acc.0, acc.1 + 1) })
+        self.fold((0usize, 0usize), |acc, x| if x.is_ok() { (acc.0 + 1, acc.1) } else { (acc.0, acc.1 + 1) })
     }
     /// Searches for an element of an iterator that the value is `Ok(_)`.
     /// If each element of the iterator all equal `Err(_)`, it returns `None`.
-    fn find_ok(&mut self) -> Option<<<Self as Iterator>::Item as _ResultTrait>::Type> {
+    fn find_ok(&mut self) -> Option<T> {
         while let Some(e) = self.next() {
-            if let Ok(x) = e._as_result() {
+            if let Ok(x) = e {
                 return Some(x);
             }
         }
@@ -73,9 +41,9 @@ pub trait ResultIter: Iterator where Self: Sized, <Self as Iterator>::Item: _Res
     }
     /// Searches for an element of an iterator that the value is `Err(_)`.
     /// If each element of the iterator all equal `Ok(_)`, it returns `None`.
-    fn find_err(&mut self) -> Option<<<Self as Iterator>::Item as _ResultTrait>::ErrType> {
+    fn find_err(&mut self) -> Option<E> {
         while let Some(e) = self.next() {
-            if let Err(x) = e._as_result() {
+            if let Err(x) = e {
                 return Some(x);
             }
         }
@@ -83,48 +51,50 @@ pub trait ResultIter: Iterator where Self: Sized, <Self as Iterator>::Item: _Res
     }
     /// Tests if any element of the iterator are `Ok(_)`.
     fn has_ok(&mut self) -> bool {
-        self.any(|e| e._is_ok())
+        self.any(|e| e.is_ok())
     }
     /// Tests if any element of the iterator are `Err(_)`.
     fn has_err(&mut self) -> bool {
-        self.any(|e| e._is_err())
+        self.any(|e| e.is_err())
     }
     /// Create an iterator which yields unwrapped `Ok(_)` value.
-    fn ok_iter(self) -> OkIter<Self> {
-        OkIter { iter: self }
+    fn ok_iter(self) -> OkIter<Self, T, E> {
+        OkIter { iter: self, phantom: PhantomData }
     }
     /// Create an iterator which yields unwrapped `Err(_)` value.
-    fn err_iter(self) -> ErrIter<Self> {
-        ErrIter { iter: self }
+    fn err_iter(self) -> ErrIter<Self, T, E> {
+        ErrIter { iter: self, phantom: PhantomData }
     }
 }
 
-impl<I: Iterator> ResultIter for I where Self: Sized, <I as Iterator>::Item: _ResultTrait {}
+impl<I, T, E> ResultIter<T, E> for I where I: Iterator<Item=Result<T, E>>, Self: Sized {}
 
-pub struct Unwrap<I> {
+pub struct Unwrap<I, T, E> {
     iter: I,
+    phantom: PhantomData<(T, E)>,
 }
 
-impl<I: Iterator> Iterator for Unwrap<I> where I::Item: _ResultTrait, <<I as Iterator>::Item as _ResultTrait>::ErrType: Debug {
-    type Item = <<I as Iterator>::Item as _ResultTrait>::Type;
+impl<I, T, E> Iterator for Unwrap<I, T, E> where I: Iterator<Item=Result<T, E>>, E: Debug {
+    type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next().map(|e| e._unwrap())
+        self.iter.next().map(|e| e.unwrap())
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
     }
 }
 
-pub struct OkIter<I> {
+pub struct OkIter<I, T, E> {
     iter: I,
+    phantom: PhantomData<(T, E)>,
 }
 
-impl<I: Iterator> Iterator for OkIter<I> where I::Item: _ResultTrait {
-    type Item = <<I as Iterator>::Item as _ResultTrait>::Type;
+impl<I, T, E> Iterator for OkIter<I, T, E> where I: Iterator<Item=Result<T, E>> {
+    type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             if let Some(e) = self.iter.next() {
-                if let Ok(x) = e._as_result() {
+                if let Ok(x) = e {
                     return Some(x);
                 }
             }
@@ -136,16 +106,17 @@ impl<I: Iterator> Iterator for OkIter<I> where I::Item: _ResultTrait {
     }
 }
 
-pub struct ErrIter<I> {
+pub struct ErrIter<I, T, E> {
     iter: I,
+    phantom: PhantomData<(T, E)>,
 }
 
-impl<I: Iterator> Iterator for ErrIter<I> where I::Item: _ResultTrait {
-    type Item = <<I as Iterator>::Item as _ResultTrait>::ErrType;
+impl<I, T, E> Iterator for ErrIter<I, T, E> where I: Iterator<Item=Result<T, E>> {
+    type Item = E;
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             if let Some(e) = self.iter.next() {
-                if let Err(x) = e._as_result() {
+                if let Err(x) = e {
                     return Some(x);
                 }
             }
@@ -157,15 +128,16 @@ impl<I: Iterator> Iterator for ErrIter<I> where I::Item: _ResultTrait {
     }
 }
 
-pub struct UnwrapOr<I: Iterator> where <I as Iterator>::Item: _ResultTrait {
+pub struct UnwrapOr<I, T, E> {
     iter: I,
-    def: <<I as Iterator>::Item as _ResultTrait>::Type
+    def: T,
+    phantom: PhantomData<E>,
 }
 
-impl<I: Iterator> Iterator for UnwrapOr<I> where I::Item: _ResultTrait, <I::Item as _ResultTrait>::Type: Clone {
-    type Item = <<I as Iterator>::Item as _ResultTrait>::Type;
+impl<I, T, E> Iterator for UnwrapOr<I, T, E> where I: Iterator<Item=Result<T, E>>, T: Clone {
+    type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next().map(|e| e._unwrap_or(self.def.clone()))
+        self.iter.next().map(|e| e.unwrap_or(self.def.clone()))
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
