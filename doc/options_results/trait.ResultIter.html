@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ResultIter` trait in crate `options_results`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ResultIter">
+
+    <title>options_results::ResultIter - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc trait">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>options_results</a></p><script>window.sidebarCurrent = {name: 'ResultIter', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>options_results</a>::<wbr><a class="trait" href=''>ResultIter</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/options_results/resultiter.rs.html#41-100' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait ResultIter: <a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Iterator</a> <span class="where fmt-newline">where Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>, Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>: _ResultTrait</span> {
+    fn <a href='#method.unwrap' class='fnname'>unwrap</a>(self) -&gt; Unwrap&lt;Self&gt; { ... }
+    fn <a href='#method.unwrap_or' class='fnname'>unwrap_or</a>(self, def: Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>::Type) -&gt; UnwrapOr&lt;Self&gt; { ... }
+    fn <a href='#method.count_ok' class='fnname'>count_ok</a>(self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a> { ... }
+    fn <a href='#method.count_err' class='fnname'>count_err</a>(self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a> { ... }
+    fn <a href='#method.count_ok_err' class='fnname'>count_ok_err</a>(self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a> { ... }
+    fn <a href='#method.find_ok' class='fnname'>find_ok</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>::Type&gt; { ... }
+    fn <a href='#method.find_err' class='fnname'>find_err</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>::ErrType&gt; { ... }
+    fn <a href='#method.has_ok' class='fnname'>has_ok</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a> { ... }
+    fn <a href='#method.has_err' class='fnname'>has_err</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a> { ... }
+    fn <a href='#method.ok_iter' class='fnname'>ok_iter</a>(self) -&gt; OkIter&lt;Self&gt; { ... }
+    fn <a href='#method.err_iter' class='fnname'>err_iter</a>(self) -&gt; ErrIter&lt;Self&gt; { ... }
+}</pre><div class='docblock'><p>Add some methods for the iterator of <code>Result&lt;T, E&gt;</code>.</p>
+</div>
+            <h2 id='provided-methods'>Provided Methods</h2>
+            <div class='methods'>
+        <h3 id='method.unwrap' class='method'><span id='unwrap.v' class='invisible'><code>fn <a href='#method.unwrap' class='fnname'>unwrap</a>(self) -&gt; Unwrap&lt;Self&gt;</code></span></h3><div class='docblock'><p>Create an iterator which yields the unwrapped value as the next value.
+(<code>Unwrap&lt;I&gt;::next()</code> will panic if the value is <code>Err(_)</code>.)</p>
+</div><h3 id='method.unwrap_or' class='method'><span id='unwrap_or.v' class='invisible'><code>fn <a href='#method.unwrap_or' class='fnname'>unwrap_or</a>(self, def: Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>::Type) -&gt; UnwrapOr&lt;Self&gt;</code></span></h3><div class='docblock'><p>Create an iterator which yields the unwrapped value or a default as the next value.</p>
+</div><h3 id='method.count_ok' class='method'><span id='count_ok.v' class='invisible'><code>fn <a href='#method.count_ok' class='fnname'>count_ok</a>(self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code></span></h3><div class='docblock'><p>Count the number of <code>Ok(_)</code> in this iterator.</p>
+</div><h3 id='method.count_err' class='method'><span id='count_err.v' class='invisible'><code>fn <a href='#method.count_err' class='fnname'>count_err</a>(self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code></span></h3><div class='docblock'><p>Count the number of <code>Err(_)</code> in this iterator.</p>
+</div><h3 id='method.count_ok_err' class='method'><span id='count_ok_err.v' class='invisible'><code>fn <a href='#method.count_ok_err' class='fnname'>count_ok_err</a>(self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a></code></span></h3><div class='docblock'><p>Count the number of <code>Ok(_)</code> and <code>Err(_)</code> in this iterator.
+Return a tuple as <code>(number of Ok value, number of Err value)</code></p>
+</div><h3 id='method.find_ok' class='method'><span id='find_ok.v' class='invisible'><code>fn <a href='#method.find_ok' class='fnname'>find_ok</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>::Type&gt;</code></span></h3><div class='docblock'><p>Searches for an element of an iterator that the value is <code>Ok(_)</code>.
+If each element of the iterator all equal <code>Err(_)</code>, it returns <code>None</code>.</p>
+</div><h3 id='method.find_err' class='method'><span id='find_err.v' class='invisible'><code>fn <a href='#method.find_err' class='fnname'>find_err</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>::ErrType&gt;</code></span></h3><div class='docblock'><p>Searches for an element of an iterator that the value is <code>Err(_)</code>.
+If each element of the iterator all equal <code>Ok(_)</code>, it returns <code>None</code>.</p>
+</div><h3 id='method.has_ok' class='method'><span id='has_ok.v' class='invisible'><code>fn <a href='#method.has_ok' class='fnname'>has_ok</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h3><div class='docblock'><p>Tests if any element of the iterator are <code>Ok(_)</code>.</p>
+</div><h3 id='method.has_err' class='method'><span id='has_err.v' class='invisible'><code>fn <a href='#method.has_err' class='fnname'>has_err</a>(&amp;mut self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h3><div class='docblock'><p>Tests if any element of the iterator are <code>Err(_)</code>.</p>
+</div><h3 id='method.ok_iter' class='method'><span id='ok_iter.v' class='invisible'><code>fn <a href='#method.ok_iter' class='fnname'>ok_iter</a>(self) -&gt; OkIter&lt;Self&gt;</code></span></h3><div class='docblock'><p>Create an iterator which yields unwrapped <code>Ok(_)</code> value.</p>
+</div><h3 id='method.err_iter' class='method'><span id='err_iter.v' class='invisible'><code>fn <a href='#method.err_iter' class='fnname'>err_iter</a>(self) -&gt; ErrIter&lt;Self&gt;</code></span></h3><div class='docblock'><p>Create an iterator which yields unwrapped <code>Err(_)</code> value.</p>
+</div></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><code>impl&lt;I:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Iterator</a>&gt; ResultIter for I <span class="where fmt-newline">where Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>, I::<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html" title="trait core::iter::iterator::Iterator">Item</a>: _ResultTrait</span></code></li>
+</ul><script type="text/javascript" async
+                         src="../implementors/options_results/trait.ResultIter.js">
+                 </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "options_results";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

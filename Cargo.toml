@@ -1,0 +1,13 @@
+[package]
+name = "options_results"
+version = "0.1.0"
+authors = ["gyu-don <takumi.kt+git@gmail.com>"]
+
+description = "Handling iterators of Option, Result."
+keywords = ["iterator"]
+license = "MIT"
+
+homepage = "https://github.com/gyu-don/options_results"
+repository = "https://github.com/gyu-don/options_results"
+
+[dependencies]

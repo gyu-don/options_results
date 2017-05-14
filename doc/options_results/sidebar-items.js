@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["OptionIter","Add some methods for the iterator of `Option<T>`."],["ResultIter","Add some methods for the iterator of `Result<T, E>`."]]});
