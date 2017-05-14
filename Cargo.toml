@@ -9,6 +9,6 @@ license = "MIT"
 
 homepage = "https://github.com/gyu-don/options_results"
 repository = "https://github.com/gyu-don/options_results"
-doc = "https://gyu-don.github.io/options_results/"
+doc = "https://gyu-don.github.io/options_results/docs/options_results/"
 
 [dependencies]
