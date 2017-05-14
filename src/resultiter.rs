@@ -67,11 +67,11 @@ pub trait ResultIter<T, E>: Iterator<Item=Result<T, E>> where Self: Sized {
     }
 }
 
-impl<I, T, E> ResultIter<T, E> for I where I: Iterator<Item=Result<T, E>>, Self: Sized {}
+impl<I, T, E> ResultIter<T, E> for I where I: Iterator<Item=Result<T, E>> + Sized {}
 
 pub struct Unwrap<I, T, E> {
     iter: I,
-    phantom: PhantomData<(T, E)>,
+    phantom: PhantomData<*const (T, E)>,
 }
 
 impl<I, T, E> Iterator for Unwrap<I, T, E> where I: Iterator<Item=Result<T, E>>, E: Debug {
@@ -86,7 +86,7 @@ impl<I, T, E> Iterator for Unwrap<I, T, E> where I: Iterator<Item=Result<T, E>>,
 
 pub struct OkIter<I, T, E> {
     iter: I,
-    phantom: PhantomData<(T, E)>,
+    phantom: PhantomData<*const (T, E)>,
 }
 
 impl<I, T, E> Iterator for OkIter<I, T, E> where I: Iterator<Item=Result<T, E>> {
@@ -108,7 +108,7 @@ impl<I, T, E> Iterator for OkIter<I, T, E> where I: Iterator<Item=Result<T, E>> 
 
 pub struct ErrIter<I, T, E> {
     iter: I,
-    phantom: PhantomData<(T, E)>,
+    phantom: PhantomData<*const (T, E)>,
 }
 
 impl<I, T, E> Iterator for ErrIter<I, T, E> where I: Iterator<Item=Result<T, E>> {
@@ -131,7 +131,7 @@ impl<I, T, E> Iterator for ErrIter<I, T, E> where I: Iterator<Item=Result<T, E>>
 pub struct UnwrapOr<I, T, E> {
     iter: I,
     def: T,
-    phantom: PhantomData<E>,
+    phantom: PhantomData<*const E>,
 }
 
 impl<I, T, E> Iterator for UnwrapOr<I, T, E> where I: Iterator<Item=Result<T, E>>, T: Clone {

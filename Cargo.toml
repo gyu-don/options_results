@@ -1,6 +1,6 @@
 [package]
 name = "options_results"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["gyu-don <takumi.kt+git@gmail.com>"]
 
 description = "Handling iterators of Option, Result."

@@ -38,11 +38,11 @@ pub trait OptionIter<T>: Iterator<Item=Option<T>> where Self: Sized {
     }
 }
 
-impl<I, T> OptionIter<T> for I where I: Iterator<Item=Option<T>>, Self: Sized {}
+impl<I, T> OptionIter<T> for I where I: Iterator<Item=Option<T>> + Sized {}
 
 pub struct Unwrap<I, T> {
     iter: I,
-    phantom: PhantomData<T>,
+    phantom: PhantomData<*const T>,
 }
 
 impl<I, T> Iterator for Unwrap<I, T> where I: Iterator<Item=Option<T>> {
@@ -57,7 +57,7 @@ impl<I, T> Iterator for Unwrap<I, T> where I: Iterator<Item=Option<T>> {
 
 pub struct SomeIter<I, T> {
     iter: I,
-    phantom: PhantomData<T>,
+    phantom: PhantomData<*const T>,
 }
 
 impl<I, T> Iterator for SomeIter<I, T> where I: Iterator<Item=Option<T>> {
